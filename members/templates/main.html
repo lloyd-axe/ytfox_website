@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YT Fox</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
+</head>
+<body>
+    <div id="main_cont">
+        <div>
+            <h1>YT Fox</h1>
+            <form method="post" action="{% url 'main:yt_get' %}">
+                {% csrf_token %}
+                <input type="text" class="textbox" name="yt_url" id="yt_url" placeholder='Enter YouTube URL Ex: "https://www.youtube.com/watch?v=u5CVsCnxyXg"' />
+                <button type="submit" class="btn btn-blue">GET AUDIO</button>
+            </form>
+        </div>
+        <div>
+            <div>
+                <img src="static/ytfox.png" height="90px" alt="YT FOX">
+                <form id="hidden-form" method="post" action="{% url 'main:yt_dl' %}">
+                    {% csrf_token %}
+                    <label for="title">Title:</label>
+                    <input class="textbox" type="text" id="title" name="title" value="{{yt_title}}" required>
+                    <label for="artist">Artist:</label>
+                    <input class="textbox" type="text" id="artist" name="artist" value="{{yt_artist}}" required>
+                    <input type="hidden" name="image_number" id="imageNumber" value="0">
+                    <button type="submit" class="btn btn-blue">DOWNLOAD</button>
+                </form>
+            </div>
+            <div>
+                <h3>Select an Image for Album Art</h3>
+                <div id="image_box">
+                  {% for album_art in album_arts %}
+                  <div class="image-container">
+                      <img src="{% static album_art %}" alt="Image {{ forloop.counter0 }}" onclick="selectImage('{{ forloop.counter0 }}')">
+                    </div>
+                  {% endfor %}
+                  </div>
+            </div>
+        </div>
+    </div>
+  <script>
+    var selectedImage = null;
+    function selectImage(imageNumber) {
+        imageNumber = parseInt(imageNumber);
+        
+        //Remove border
+        if (selectedImage !== null) {
+            selectedImage.style.border = '2px solid #ccc';
+        }
+
+        // Set border for the newly selected image
+        selectedImage = document.querySelector(`img[alt="Image ${imageNumber}"]`);
+        selectedImage.style.border = '2px solid blue';
+        document.getElementById('imageNumber').value = imageNumber;
+    }
+  </script>
+</body>
+</html>
